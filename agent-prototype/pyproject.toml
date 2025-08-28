@@ -1,0 +1,15 @@
+[project]
+name = "agent-prototype"
+version = "0.1.0"
+description = "Agent prototype with Claude Code SDK and MCP server"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.40.0",
+    "mcp>=1.0.0",
+    "asyncio-mqtt>=0.14.0",
+    "pydantic>=2.0.0",
+    "uvicorn>=0.24.0",
+    "fastapi>=0.104.0",
+    "python-dotenv>=1.0.0",
+]
