@@ -1,10 +1,8 @@
 """Claude agent implementation with MCP client integration."""
 
 from typing import Dict, Any, List, Optional
-import asyncio
 import json
 import os
-import subprocess
 from anthropic import Anthropic
 from pydantic import BaseModel
 from mcp.client.stdio import stdio_client, StdioServerParameters
@@ -24,7 +22,7 @@ class AgentConfig(BaseModel):
     model: str = "claude-3-5-sonnet-20241022"
     max_tokens: int = 4000
     temperature: float = 0.7
-    mcp_server_command: List[str] = ["python", "-m", "src.agent_prototype.mcp_server.server"]
+    mcp_server_command: List[str] = ["uv", "run", "-m", "src.agent_prototype.mcp_server.server"]
 
 
 class ClaudeAgent:
@@ -156,6 +154,7 @@ class ClaudeAgent:
                         )
                         
                         tool_results.append({
+                            "type": "tool_result",
                             "tool_use_id": block.id,
                             "content": json.dumps(tool_result, indent=2)
                         })

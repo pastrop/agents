@@ -62,12 +62,18 @@ async def run_demo_mode(agent: ClaudeAgent):
     print("\n🎯 Agent Capability Demo")
     print("=" * 30)
     
+    # Show available tools without triggering tool calls
+    print(f"\n📦 Available Tools:")
+    print("-" * 20)
+    tools = await agent.get_available_tools()
+    for tool in tools:
+        print(f"  • {tool['name']}: {tool['description']}")
+    
+    # Simple demo queries that don't trigger complex tool calling
     demo_queries = [
-        "What tools do you have available?",
-        "Search the web for 'artificial intelligence trends 2024'",
-        "Analyze this Python code: 'def factorial(n): return 1 if n <= 1 else n * factorial(n-1)'",
-        "Get system information",
-        "Process this data: [{'name': 'Alice', 'age': 30}, {'name': 'Bob', 'age': 25}] and sort it"
+        "Hello! Can you introduce yourself?",
+        "What can you help me with?",
+        "Explain what MCP (Model Context Protocol) is in simple terms."
     ]
     
     for i, query in enumerate(demo_queries, 1):
@@ -105,12 +111,16 @@ async def main():
     print(f"   Max tokens: {config.max_tokens}")
     print(f"   Temperature: {config.temperature}")
     
-    # Check command line arguments
-    import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--demo":
-        await run_demo_mode(agent)
-    else:
-        await run_interactive_session(agent)
+    try:
+        # Check command line arguments
+        import sys
+        if len(sys.argv) > 1 and sys.argv[1] == "--demo":
+            await run_demo_mode(agent)
+        else:
+            await run_interactive_session(agent)
+    finally:
+        # Clean up MCP connection
+        await agent.disconnect_from_mcp_server()
 
 
 if __name__ == "__main__":
