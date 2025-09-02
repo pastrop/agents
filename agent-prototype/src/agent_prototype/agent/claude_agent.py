@@ -1,8 +1,10 @@
 """Claude agent implementation with MCP client integration."""
 
 from typing import Dict, Any, List, Optional
+#import asyncio
 import json
 import os
+#import subprocess
 from anthropic import Anthropic
 from pydantic import BaseModel
 from mcp.client.stdio import stdio_client, StdioServerParameters
