@@ -4,11 +4,11 @@ A prototype implementation of an AI agent using the Claude SDK with MCP (Model C
 
 ## Architecture Overview
 
-This prototype demonstrates a modular architecture with:
+This prototype demonstrates a modern, clean architecture with:
 
 - **Claude Agent**: Main agent implementation using Anthropic's Claude SDK
-- **MCP Server**: Local server providing tool access to the agent
-- **Placeholder Tools**: Example tools for web search, file operations, code analysis, data processing, and system info
+- **FastMCP Server**: Modern MCP server using FastMCP with integrated tools
+- **Tool Integration**: Tools defined directly in the server using decorators and docstrings
 - **Interactive Interface**: Command-line interface for chatting with the agent
 
 ## Project Structure
@@ -18,11 +18,10 @@ agent-prototype/
 ├── src/agent_prototype/
 │   ├── agent/
 │   │   └── claude_agent.py    # Main agent implementation
-│   ├── mcp_server/
-│   │   └── server.py          # MCP server with tool registry
-│   └── tools/
-│       └── placeholder_tools.py  # Tool implementations
+│   └── mcp_server/
+│       └── server.py          # FastMCP server with integrated tools
 ├── main.py                    # Entry point and orchestration
+├── test_mcp.py               # MCP functionality tests
 ├── pyproject.toml            # uv project configuration
 └── .env.example              # Environment configuration template
 ```
@@ -58,7 +57,7 @@ uv run main.py
 
 The agent will start an interactive session where you can:
 - Chat with Claude using available tools
-- Type `tools` to see available tools
+- Type `tools` to see available tools with detailed descriptions
 - Type `clear` to clear conversation history
 - Type `quit` or `exit` to end the session
 
@@ -67,61 +66,70 @@ The agent will start an interactive session where you can:
 uv run main.py --demo
 ```
 
-Runs a preset demonstration showing the agent's capabilities with various tool calls.
+Runs a simple demonstration showing the agent's capabilities and available tools.
+
+### Testing
+```bash
+uv run test_mcp.py
+```
+
+Tests MCP server-client communication and individual tool functionality.
 
 ## Available Tools
 
-The prototype includes these placeholder tools:
+The prototype includes these integrated tools:
 
-- **web_search**: Search the web for information
-- **file_operations**: Perform file operations (read, write, delete, list)
-- **code_analysis**: Analyze code for issues and suggestions  
-- **data_processing**: Process data with various operations
-- **system_info**: Get system information
+- **web_search**: Search the web for information with configurable result limits
+- **file_operations**: Perform file operations (read, write, delete, list) on specified paths
+- **code_analysis**: Analyze source code for issues and suggestions with language support
+- **data_processing**: Process arrays of data objects with various operations
+- **system_info**: Get comprehensive system information including platform and resource usage
+
+Each tool provides detailed parameter descriptions and return value documentation through docstrings.
 
 ## Key Components
 
 ### ClaudeAgent (`src/agent_prototype/agent/claude_agent.py`)
-- Manages conversation with Claude
-- Handles tool calling and result processing
-- Converts between MCP and Claude tool formats
-- Maintains conversation history
+- Manages conversation with Claude using the Anthropic SDK
+- Handles tool calling and result processing with proper API formatting
+- Maintains conversation history and manages MCP client sessions
+- Provides async context manager support for resource cleanup
 
-### MCPServer (`src/agent_prototype/mcp_server/server.py`)
-- Provides tool registry and execution
-- Handles tool calls from the agent
-- Returns structured results
-- Can be extended with real tool implementations
-
-### Placeholder Tools (`src/agent_prototype/tools/placeholder_tools.py`)
-- Example tool implementations that simulate real functionality
-- Easy to replace with actual tool logic
-- Demonstrate different types of operations (async, data processing, etc.)
+### FastMCP Server (`src/agent_prototype/mcp_server/server.py`)
+- Built using the modern FastMCP framework for clean, maintainable code
+- Tools defined directly with `@mcp.tool()` decorators
+- Automatic schema generation from function signatures and docstrings
+- Rich documentation support with detailed parameter descriptions
+- Automatic input validation and error handling
 
 ## Extending the System
 
-To add new tools:
+Adding new tools is now extremely simple with FastMCP:
 
-1. **Add tool function** in `placeholder_tools.py`:
-   ```python
-   async def my_new_tool(param1: str, param2: int = 10) -> Dict[str, Any]:
-       # Tool implementation
-       return {"result": "success"}
-   ```
+```python
+@mcp.tool()
+async def my_new_tool(param1: str, param2: int = 10) -> Dict[str, Any]:
+    """Brief description of what this tool does.
+    
+    Args:
+        param1: Description of the first parameter
+        param2: Description of the second parameter with default value
+        
+    Returns:
+        Dictionary containing the tool's results
+    """
+    # Your tool implementation here
+    return {"result": "success", "processed": param1}
+```
 
-2. **Register in MCP server** (`mcp_server/server.py`):
-   ```python
-   self.tools["my_new_tool"] = {
-       "function": my_new_tool,
-       "description": "Description of what this tool does",
-       "parameters": {
-           "param1": {"type": "string", "required": True},
-           "param2": {"type": "integer", "default": 10}
-       }
-   }
-   ```
+**Benefits of this approach:**
+- **Single source of truth**: Function signature defines the schema
+- **Rich documentation**: Docstrings become tool descriptions automatically
+- **Type safety**: FastMCP validates inputs against function signatures
+- **No boilerplate**: No manual schema definitions or registrations needed
+- **Maintainable**: Changes to function automatically update the tool interface
 
-The agent will automatically discover and use the new tool.
+The agent will automatically discover and use any new tools added with the `@mcp.tool()` decorator.
 
 ## Configuration
 
@@ -133,10 +141,20 @@ Environment variables (in `.env`):
 
 ## Development
 
-This prototype uses:
-- **uv** for package management
-- **Pydantic** for data validation
-- **asyncio** for asynchronous operations
+This prototype uses modern Python tooling:
+- **uv** for fast package management and virtual environments
+- **FastMCP** for modern MCP server development
+- **Pydantic** for data validation and type safety
 - **Anthropic SDK** for Claude integration
+- **Type hints** throughout for better developer experience
 
-The modular design allows easy extension and modification of individual components without affecting the overall architecture.
+## Key Features
+
+- **Clean Architecture**: No code duplication between tool definitions and schemas
+- **Rich Documentation**: Tools automatically documented from docstrings
+- **Type Safety**: Full type checking and validation
+- **Modern Tooling**: Built with the latest Python ecosystem tools
+- **Easy Testing**: Comprehensive test suite for MCP functionality
+- **Professional Output**: FastMCP provides beautiful server startup information
+
+The modular design with FastMCP makes this prototype easy to understand, extend, and maintain.
