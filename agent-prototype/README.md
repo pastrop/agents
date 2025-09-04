@@ -141,7 +141,7 @@ Environment variables (in `.env`):
 
 ## Development
 
-This prototype uses modern Python tooling:
+This prototype uses the following Python tooling:
 - **uv** for fast package management and virtual environments
 - **FastMCP** for modern MCP server development
 - **Pydantic** for data validation and type safety
@@ -150,11 +150,11 @@ This prototype uses modern Python tooling:
 
 ## Key Features
 
-- **Clean Architecture**: No code duplication between tool definitions and schemas
-- **Rich Documentation**: Tools automatically documented from docstrings
+- **Architecture**: No code duplication between tool definitions and schemas
+- **Documentation**: Tools automatically documented from docstrings
 - **Type Safety**: Full type checking and validation
 - **Modern Tooling**: Built with the latest Python ecosystem tools
 - **Easy Testing**: Comprehensive test suite for MCP functionality
-- **Professional Output**: FastMCP provides beautiful server startup information
+
 
 The modular design with FastMCP makes this prototype easy to understand, extend, and maintain.
